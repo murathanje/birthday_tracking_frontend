@@ -1,16 +1,32 @@
 'use client'
 
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Header from '../../components/Header'
+import { useAuth } from '../../contexts/AuthContext'
 
 export default function LoginPage() {
   const router = useRouter()
+  const { login } = useAuth()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    // For development: directly redirect to dashboard
-    router.push('/dashboard')
+    setError('')
+    setLoading(true)
+
+    try {
+      await login(email, password)
+      router.push('/dashboard')
+    } catch (error) {
+      setError(error.message || 'Failed to login')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -39,45 +55,52 @@ export default function LoginPage() {
                   Welcome Back
                 </h2>
               </div>
+
+              {error && (
+                <div className="bg-rose-100 text-rose-600 p-3 rounded-lg text-sm">
+                  {error}
+                </div>
+              )}
+
               <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                 <div className="rounded-md space-y-4">
                   <div>
-                    <label htmlFor="email" className="sr-only">
-                      Email address
-                    </label>
+                    <label htmlFor="email" className="sr-only">Email address</label>
                     <input
                       id="email"
                       name="email"
                       type="email"
                       required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       className="appearance-none relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 focus:z-10 sm:text-sm"
                       placeholder="Email address"
                     />
                   </div>
                   <div>
-                    <label htmlFor="password" className="sr-only">
-                      Password
-                    </label>
+                    <label htmlFor="password" className="sr-only">Password</label>
                     <input
                       id="password"
                       name="password"
                       type="password"
                       required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                       className="appearance-none relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:border-secondary-500 focus:z-10 sm:text-sm"
                       placeholder="Password"
                     />
                   </div>
                 </div>
 
-                <div>
-                  <button
-                    type="submit"
-                    className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-secondary-500 via-teal-500 to-primary-500 hover:shadow-glow-multi transform hover:scale-102 transition-all duration-200"
-                  >
-                    Sign in
-                  </button>
-                </div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-secondary-500 via-teal-500 to-primary-500 hover:shadow-glow-multi transform hover:scale-102 transition-all duration-200"
+                >
+                  {loading ? 'Signing in...' : 'Sign in'}
+                </button>
               </form>
+
               <div className="text-center">
                 <Link 
                   href="/auth/register" 
