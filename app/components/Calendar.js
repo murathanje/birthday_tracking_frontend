@@ -68,113 +68,116 @@ export default function Calendar({ onEditFriend }) {
     )
   }
 
+  // Add empty state message if no birthdays
+  if (!loading && (!birthdays || birthdays.length === 0)) {
+    return (
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-soft border border-slate-200/50">
+        <div className="flex items-center justify-between mb-4 sm:mb-8">
+          <h2 className="text-lg sm:text-xl font-bold text-black">Calendar</h2>
+        </div>
+        <div className="flex items-center justify-center h-[300px] sm:h-[500px]">
+          <div className="text-center">
+            <div className="text-4xl mb-4">📅</div>
+            <h3 className="text-base sm:text-lg font-semibold text-black mb-2">Your Calendar is Empty</h3>
+            <p className="text-sm sm:text-base text-black/60">Add your first birthday to see it on the calendar</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-slate-200/50">
-      <div className="flex items-center justify-between mb-8">
-        <h2 className="text-xl font-bold text-black">
-          Calendar
-        </h2>
-        <div className="flex items-center gap-6">
+    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-soft border border-slate-200/50">
+      <div className="flex items-center justify-between mb-4 sm:mb-8">
+        <h2 className="text-lg sm:text-xl font-bold text-black">Calendar</h2>
+        <div className="flex items-center gap-2 sm:gap-6">
           <button
             onClick={() => navigateMonth(-1)}
-            className="p-2 rounded-xl text-black hover:text-black hover:bg-slate-100 transition-all duration-200 hover:scale-110 active:scale-95"
+            className="p-1 sm:p-2 rounded-xl text-black hover:text-black hover:bg-slate-100 transition-all duration-200 hover:scale-110 active:scale-95"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 sm:w-5 h-4 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <span className="text-lg font-medium text-black min-w-[140px] text-center">
+          <span className="text-sm sm:text-lg font-medium text-black min-w-[80px] sm:min-w-[140px] text-center">
             {currentMonth.toLocaleDateString('en-US', { month: 'long' })}
           </span>
           <button
             onClick={() => navigateMonth(1)}
-            className="p-2 rounded-xl text-black hover:text-black hover:bg-slate-100 transition-all duration-200 hover:scale-110 active:scale-95"
+            className="p-1 sm:p-2 rounded-xl text-black hover:text-black hover:bg-slate-100 transition-all duration-200 hover:scale-110 active:scale-95"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 sm:w-5 h-4 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
         </div>
       </div>
 
-      <div className="rounded-xl overflow-hidden border border-slate-200/50">
-        {/* Calendar header */}
-        <div className="grid grid-cols-7 bg-slate-50">
-          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, i) => (
-            <div 
-              key={day}
-              className="p-3 text-center text-sm font-medium text-black border-b border-slate-200/50 animate-fade-in-down"
-              style={{ animationDelay: `${i * 50}ms` }}
+      {/* Weekday Headers */}
+      <div className="grid grid-cols-7 text-center text-xs sm:text-sm font-medium text-black/60 mb-2 sm:mb-4">
+        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+          <div key={day} className="p-1">{day}</div>
+        ))}
+      </div>
+
+      {/* Calendar Grid */}
+      <div className="grid grid-cols-7 text-center">
+        {calendar.map((date, index) => {
+          const birthdays = getBirthdaysForDate(date)
+          const isToday = date && 
+            new Date().getDate() === date.getDate() && 
+            new Date().getMonth() === date.getMonth()
+          
+          return (
+            <div
+              key={index}
+              className={`min-h-[60px] sm:min-h-[120px] border-b border-r border-slate-200/50 last:border-r-0 animate-fade-in ${
+                getCalendarDayClass(date, isToday, birthdays)
+              }`}
+              style={{ animationDelay: `${index * 10}ms` }}
             >
-              {day}
-            </div>
-          ))}
-        </div>
-
-        {/* Calendar grid */}
-        <div 
-          className={`grid grid-cols-7 bg-slate-50/50 transition-transform duration-500 ${
-            slideDirection === 'left' ? 'animate-slide-left' : 
-            slideDirection === 'right' ? 'animate-slide-right' : ''
-          }`}
-        >
-          {calendar.map((date, index) => {
-            const birthdays = getBirthdaysForDate(date)
-            const isToday = date && 
-              new Date().getDate() === date.getDate() && 
-              new Date().getMonth() === date.getMonth()
-            
-            return (
-              <div
-                key={index}
-                className={`min-h-[120px] border-b border-r border-slate-200/50 last:border-r-0 animate-fade-in ${
-                  getCalendarDayClass(date, isToday, birthdays)
-                }`}
-                style={{ animationDelay: `${index * 10}ms` }}
-              >
-                {date && (
-                  <div className="p-2 h-full">
-                    <div className="flex items-start justify-between">
-                      <span
-                        className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-sm transition-transform hover:scale-110 ${
-                          isToday
-                            ? 'bg-black text-white font-medium'
-                            : 'text-black'
-                        }`}
-                      >
-                        {date.getDate()}
-                      </span>
-                      
-                      {birthdays.length > 0 && (
-                        <span
-                          className="flex items-center justify-center w-5 h-5 bg-slate-100 text-black rounded-full text-xs font-medium animate-pop-in"
-                        >
-                          {birthdays.length}
-                        </span>
-                      )}
-                    </div>
-
+              {date && (
+                <div className="p-1 sm:p-2 h-full">
+                  <div className="flex items-start justify-between">
+                    <span
+                      className={`inline-flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 rounded-full text-xs sm:text-sm transition-transform hover:scale-110 ${
+                        isToday
+                          ? 'bg-black text-white font-medium'
+                          : 'text-black'
+                      }`}
+                    >
+                      {date.getDate()}
+                    </span>
+                    
                     {birthdays.length > 0 && (
-                      <div className="mt-2 space-y-1">
-                        {birthdays.map((birthday, idx) => (
-                          <div
-                            key={birthday.id}
-                            onClick={() => onEditFriend(birthday)}
-                            className="text-xs px-2 py-1 rounded-lg bg-slate-100 text-black truncate hover:bg-slate-200 transition-all duration-200 hover:scale-102 cursor-pointer animate-slide-in"
-                            style={{ animationDelay: `${idx * 100}ms` }}
-                          >
-                            <span className="mr-1">🎂</span>
-                            {birthday.name}
-                          </div>
-                        ))}
-                      </div>
+                      <span
+                        className="flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 bg-slate-100 text-black rounded-full text-[10px] sm:text-xs font-medium animate-pop-in"
+                      >
+                        {birthdays.length}
+                      </span>
                     )}
                   </div>
-                )}
-              </div>
-            )
-          })}
-        </div>
+
+                  {birthdays.length > 0 && (
+                    <div className="mt-1 sm:mt-2 space-y-1">
+                      {birthdays.map((birthday, idx) => (
+                        <div
+                          key={birthday.id}
+                          onClick={() => onEditFriend(birthday)}
+                          className="text-[10px] sm:text-xs px-1 sm:px-2 py-0.5 sm:py-1 rounded-lg bg-slate-100 text-black truncate hover:bg-slate-200 transition-all duration-200 hover:scale-102 cursor-pointer animate-slide-in"
+                          style={{ animationDelay: `${idx * 100}ms` }}
+                        >
+                          <span className="mr-1 text-xs sm:text-sm">🎂</span>
+                          {birthday.name}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )
+        })}
       </div>
     </div>
   )
