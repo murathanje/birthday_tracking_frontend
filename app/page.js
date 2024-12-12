@@ -294,7 +294,7 @@ export default function Home() {
                       key={index}
                       className={`scroll-animation scroll-animation-delay-${index % 3 + 1}`}
                     >
-                      <div className="group p-6 rounded-xl bg-white/60 backdrop-blur-sm border border-slate-200/50 hover:border-slate-300/50 shadow-soft hover:shadow-soft-lg transition-all duration-300">
+                      <div className="group p-6 rounded-xl bg-white/60 backdrop-blur-sm border border-slate-200/50 hover:border-slate-300/50 shadow-soft hover:shadow-soft-lg transition-all duration-300 min-h-[200px]">
                         <div className="text-3xl mb-3 group-hover:scale-110 transition-transform duration-300">
                           {feature.icon}
                         </div>

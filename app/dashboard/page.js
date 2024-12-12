@@ -11,7 +11,7 @@ import Overview from '../components/Overview'
 export default function DashboardPage() {
   const router = useRouter()
   const { user, loading: authLoading } = useAuth()
-  const { birthdays, loading: birthdaysLoading, fetchBirthdays } = useBirthday()
+  const { birthdays, fetchBirthdays } = useBirthday()
   const [activeTab, setActiveTab] = useState('overview')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
@@ -25,7 +25,7 @@ export default function DashboardPage() {
         fetchBirthdays()
       }
     }
-  }, [user, authLoading])
+  }, [user, authLoading, router])
 
   const categories = [
     'all',

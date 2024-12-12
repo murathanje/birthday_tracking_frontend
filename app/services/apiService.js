@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5050/api/v1'
+const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 async function handleResponse(response) {
   try {
@@ -6,8 +6,7 @@ async function handleResponse(response) {
     
     if (!response.ok) {
       if (response.status === 401) {
-        localStorage.removeItem('token')
-        window.location.href = '/auth/login'
+        throw new Error('UNAUTHORIZED')
       }
       throw new Error(data.message || 'Something went wrong')
     }
