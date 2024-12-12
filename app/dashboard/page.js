@@ -105,7 +105,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-b from-white to-slate-50 p-4 sm:p-6 pt-24 space-y-4 sm:space-y-6">
+    <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-b from-white to-slate-50 p-4 sm:p-6 pt-24 sm:pt-32 space-y-4 sm:space-y-6">
       {/* Header Section with Animation */}
       <div className="relative overflow-hidden bg-white/80 backdrop-blur-sm rounded-2xl p-4 sm:p-8 shadow-soft border border-slate-200/50">
         <div className="relative z-10">

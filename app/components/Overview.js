@@ -98,15 +98,41 @@ export default function Overview({
   }
 
   const formatDaysText = (daysUntil) => {
+    // Future dates
     if (daysUntil === 0) return 'Today!'
     
+    if (daysUntil === 1) return 'Tomorrow'
+    
     if (daysUntil > 0) {
-      return `${daysUntil} day${daysUntil === 1 ? '' : 's'} left`
-    } else {
-      // For past birthdays, calculate days since last birthday
-      const daysPassed = Math.abs(daysUntil)
-      return `${daysPassed} day${daysPassed === 1 ? '' : 's'} past`
+      if (daysUntil < 7) {
+        return `${daysUntil} day${daysUntil === 1 ? '' : 's'} left`
+      }
+      
+      if (daysUntil < 21) {
+        const weeks = Math.floor(daysUntil / 7)
+        return `${weeks} week${weeks === 1 ? '' : 's'} left`
+      }
+      
+      const months = Math.floor(daysUntil / 30)
+      return `${months} month${months === 1 ? '' : 's'} left`
     }
+    
+    // Past dates
+    const pastDays = Math.abs(daysUntil)
+    
+    if (pastDays === 1) return 'Yesterday'
+    
+    if (pastDays < 7) {
+      return `${pastDays} day${pastDays === 1 ? '' : 's'} past`
+    }
+    
+    if (pastDays < 21) {
+      const weeks = Math.floor(pastDays / 7)
+      return `${weeks} week${weeks === 1 ? '' : 's'} past`
+    }
+    
+    const months = Math.floor(pastDays / 30)
+    return `${months} month${months === 1 ? '' : 's'} past`
   }
 
   if (loading) {
